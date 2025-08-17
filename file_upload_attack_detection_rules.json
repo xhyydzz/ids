@@ -1,0 +1,100 @@
+{
+  "file_upload_attack_detection_rules": [
+    {
+      "rule_id": "file_upload_001",
+      "description": "Detect executable file upload",
+      "severity": "critical",
+      "conditions": {
+        "file_extension": [".exe", ".bat", ".sh", ".php", ".jsp",".jspx",".asp",".aspx"]
+      }
+    },
+    {
+      "rule_id": "file_upload_002",
+      "description": "Detect large file upload (potential DoS attempt)",
+      "severity": "high",
+      "conditions": {
+        "file_size": {
+          "min_size": "1KB",
+          "max_size": "100MB"
+        }
+      }
+    },
+    {
+      "rule_id": "file_upload_003",
+      "description": "Detect suspicious file MIME types",
+      "severity": "high",
+      "conditions": {
+        "mime_type": ["application/x-msdownload", "application/x-sh", "application/x-php"],
+        "mime_extension_mismatch": true
+      }
+    },
+    {
+      "rule_id": "file_upload_004",
+      "description": "Detect duplicate file uploads",
+      "severity": "medium",
+      "conditions": {
+        "duplicate_file_hash": {
+          "threshold": 5,
+          "time_window": 300
+        }
+      }
+    },
+    {
+      "rule_id": "file_upload_005",
+      "description": "Detect file uploads with double extensions",
+      "severity": "high",
+      "conditions": {
+        "double_extension": true,
+        "suspicious_combinations": [".php.jpg", ".exe.png", ".jsp.gif"]
+      }
+    },
+    {
+      "rule_id": "file_upload_006",
+      "description": "Detect file uploads with null bytes in filename",
+      "severity": "critical",
+      "conditions": {
+        "null_bytes_in_filename": true
+      }
+    },
+    {
+      "rule_id": "file_upload_007",
+      "description": "Detect potentially dangerous configuration files",
+      "severity": "high",
+      "conditions": {
+        "file_extension": [".htaccess", ".config",".user.ini", ".env"],
+        "content_analysis": true
+      }
+    },
+    {
+      "rule_id": "file_upload_008",
+      "description": "Detect file uploads with overly long filenames",
+      "severity": "medium",
+      "conditions": {
+        "filename_length": {
+          "warning_threshold": 100,
+          "alert_threshold": 255
+        }
+      }
+    },
+    {
+      "rule_id": "file_upload_009",
+      "description": "Detect file uploads with embedded malicious code",
+      "severity": "critical",
+      "conditions": {
+        "content_patterns": ["<?php", "eval(", "shell_exec(", "system("],
+        "scan_depth": "500KB"
+      }
+    },
+    {
+      "rule_id": "file_upload_010",
+      "description": "Detect file uploads with embedded malicious code",
+      "severity": "high",
+      "conditions": {
+        "image_with_embedded_code": {
+          "extensions": [".jpg", ".png", ".gif"],
+          "magic_bytes_check": true
+        }
+      }
+    }
+  ]
+}

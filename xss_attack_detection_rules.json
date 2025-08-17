@@ -1,0 +1,60 @@
+{
+  "xss_attack_detection_rules": [
+    {
+      "rule_id": "xss_001",
+      "description": "Detect <script> tags in request parameters",
+      "severity": "medium",
+      "conditions": {
+        "request_parameters_contain": ["<script>", "</script>"]
+      }
+    },
+    {
+      "rule_id": "xss_002",
+      "description": "Detect JavaScript event handlers in request parameters",
+      "severity": "medium",
+      "conditions": {
+        "request_parameters_contain": ["onload=", "onerror=", "onclick=", "onmouseover="]
+      }
+    },
+    {
+      "rule_id": "xss_003",
+      "description": "Detect JavaScript URIs in request parameters",
+      "severity": "medium",
+      "conditions": {
+        "request_parameters_contain": ["javascript:", "data:"]
+      }
+    },
+    {
+      "rule_id": "xss_004",
+      "description": "Detect encoded XSS payloads in request parameters",
+      "severity": "critical",
+      "conditions": {
+        "request_parameters_contain": ["%3Cscript%3E", "%22onload%3D", "javascript%3A"]
+      }
+    },
+    {
+      "rule_id": "xss_005",
+      "description": "Detect dynamic script tag generation in response content",
+      "severity": "critical",
+      "conditions": {
+        "response_content_contains": ["document.createElement('script')", "eval("]
+      }
+    },
+    {
+      "rule_id": "xss_006",
+      "description": "Detect XSS payloads using document.cookie",
+      "severity": "critical",
+      "conditions": {
+        "response_content_contains": ["document.cookie"]
+      }
+    },
+    {
+      "rule_id": "xss_007",
+      "description": "Detect XSS payloads using alert() or confirm()",
+      "severity": "low",
+      "conditions": {
+        "response_content_contains": ["alert(", "confirm("]
+      }
+    }
+  ]
+}

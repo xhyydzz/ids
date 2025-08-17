@@ -1,0 +1,169 @@
+{
+  "sqlmap_detection_rules": [
+    {
+      "rule_id": "sqlmap_001",
+      "description": "Detect sqlmap default User-Agent",
+      "severity": "high",
+      "conditions": {
+        "user_agent": ["sqlmap", "libinjection"],
+        "threshold": "3 requests per minute"
+      }
+    },
+    {
+      "rule_id": "sqlmap_002",
+      "description": "Detect common SQL injection statements in URL",
+      "severity": "critical",
+      "conditions": {
+        "url_contains": [
+          "UNION SELECT",
+          "AND 1=1",
+          "OR 1=1",
+          "EXEC(",
+          "CAST(",
+          "CONVERT(",
+          "DECLARE",
+          "ORDER BY",
+          "/**/",
+          "--",
+          "#",
+          "'",
+          "\"",
+          ")"
+        ],
+        "threshold": "5 attempts per hour"
+      }
+    },
+    {
+      "rule_id": "sqlmap_003",
+      "description": "Detect SQL injection features in POST data",
+      "severity": "critical",
+      "conditions": {
+        "post_body_contains": [
+          "' OR '1'='1",
+          "AND 1=1",
+          "UNION SELECT",
+          "WAITFOR DELAY",
+          "BENCHMARK(",
+          "IF(",
+          "/**/",
+          "--",
+          "ORDER BY",
+          "#",
+          "'",
+          "\"",
+          ")"
+        ],
+        "content_type": ["application/x-www-form-urlencoded", "multipart/form-data", "application/json"]
+      }
+    },
+    {
+      "rule_id": "sqlmap_004",
+      "description": "Detect SQL syntax error probing behavior",
+      "severity": "medium",
+      "conditions": {
+        "response_contains": [
+          "SQL syntax",
+          "mysql_fetch",
+          "syntax error",
+          "ORA-",
+          "PostgreSQL",
+          "MariaDB",
+          "SQL Server"
+        ],
+        "threshold": "10 errors per day",
+        "http_codes": [500, 501, 502]
+      }
+    },
+    {
+      "rule_id": "sqlmap_005",
+      "description": "Detect database file read/write operations",
+      "severity": "critical",
+      "conditions": {
+        "url_contains": [
+          "LOAD_FILE(",
+          "INTO OUTFILE",
+          "INTO DUMPFILE",
+          "xp_cmdshell",
+          "sp_OACreate"
+        ],
+        "blacklist_extensions": [".php", ".jsp", ".asp"]
+      }
+    },
+    {
+      "rule_id": "sqlmap_006",
+      "description": "Detect database fingerprinting behavior",
+      "severity": "high",
+      "conditions": {
+        "url_contains": [
+          "@@version",
+          "VERSION()",
+          "DATABASE()",
+          "CURRENT_USER",
+          "SCHEMA()",
+          "db_name()"
+        ],
+        "threshold": "3 attempts per session"
+      }
+    },
+    {
+      "rule_id": "sqlmap_007",
+      "description": "Detect suspicious parameter names",
+      "severity": "low",
+      "conditions": {
+        "parameter_names": [
+          "id",
+          "username",
+          "password",
+          "query",
+          "sql",
+          "cmd",
+          "exec"
+        ],
+        "whitelist": []
+      }
+    },
+    {
+      "rule_id": "sqlmap_008",
+      "description": "Detect boolean-based blind injection features",
+      "severity": "high",
+      "conditions": {
+        "url_contains": [
+          "AND LENGTH(",
+          "IF(SUBSTRING(",
+          "ASCII(SUBSTRING(",
+          "LIKE 'a%'",
+          "BETWEEN"
+        ],
+        "requests_with_same_session": "10"
+      }
+    },
+    {
+      "rule_id": "sqlmap_009",
+      "description": "Detect time-based blind injection features",
+      "severity": "high",
+      "conditions": {
+        "url_contains": [
+          "SLEEP(",
+          "WAITFOR DELAY",
+          "PG_SLEEP(",
+          "BENCHMARK("
+        ],
+        "response_time": "> 2000ms"
+      }
+    },
+    {
+      "rule_id": "sqlmap_010",
+      "description": "Detect second-order SQL injection features",
+      "severity": "critical",
+      "conditions": {
+        "post_body_contains": [
+          "hex(",
+          "char(",
+          "concat(",
+          "chr("
+        ],
+        "response_pattern": "stored XSS"
+      }
+    }
+  ]
+}

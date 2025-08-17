@@ -1,0 +1,147 @@
+{
+  "dirsearch_detection_rules": [
+    {
+      "rule_id": "dirsearch_001",
+      "description": "Detect Dirsearch user-agent and known tool fingerprints",
+      "conditions": {
+        "user_agent": ["dirsearch", "WebBench", "Go-http-client", "nikto", "wfuzz"],
+        "regex_patterns": ["(?i)scanner|exploit"]
+      },
+      "action": "block",
+      "severity": "high"
+    },
+    {
+      "rule_id": "dirsearch_002",
+      "description": "Detect high-frequency path brute-forcing",
+      "conditions": {
+        "request_count": {
+          "threshold": 100,
+          "time_window": 10,
+          "path_similarity": 0.8
+        }
+      },
+      "action": "rate_limit",
+      "severity": "high"
+    },
+    {
+      "rule_id": "dirsearch_003",
+      "description": "Directory Traversal and LFI attack detection",
+      "conditions": {
+        "url_contains": [
+          "../", "..%2F", "..%252F", "..\\",  
+          "/etc/passwd", "$PATH", "/proc/self",
+          "~\root", "C:\\Windows\\", "%5C.."
+        ],
+        "regex_patterns": [
+          "(?i)(\\.\\./){2,}",
+          "(?i)(file|php):\\/\\/|\\/\\/\\/"
+        ]
+      },
+      "action": "block",
+      "severity": "high"
+    },
+    {
+      "rule_id": "dirsearch_004",
+      "description": "Hidden files and sensitive directory detection",
+      "conditions": {
+        "url_contains": [
+          ".git/HEAD", ".svn/entries", 
+          ".well-known/", "/.aws/credentials",
+          "phpinfo.php", "/.htpasswd"
+        ],
+        "regex_patterns": [
+          "(?i)/\\..*/(config|credentials|secret)"
+        ]
+      },
+      "action": "block",
+      "severity": "medium"
+    },
+    {
+      "rule_id": "dirsearch_005",
+      "description": "Backup files and data leak detection",
+      "conditions": {
+        "url_contains": [
+          ".bak", ".swp", ".un~", 
+          ".sql.gz", "db_dump.txt"
+        ],
+        "regex_patterns": [
+          "(?i)\\.(sql|dump|backup)\\b"
+        ]
+      },
+      "action": "block",
+      "severity": "medium"
+    },
+    {
+      "rule_id": "dirsearch_006",
+      "description": "Sensitive admin interface access",
+      "conditions": {
+        "url_contains": [
+          "/admin/login.jsp", "/wp-admin/admin-ajax.php",
+          "/jmx-console/", "/actuator/health"
+        ],
+        "rate_limit": {
+          "threshold": 20,
+          "time_window": 5
+        }
+      },
+      "action": "block",
+      "severity": "high"
+    },
+    {
+      "rule_id": "dirsearch_007",
+      "description": "Cloud metadata and API endpoint probing",
+      "conditions": {
+        "url_contains": [
+          "/latest/meta-data/", 
+          "/azuremetadata/instance",
+          "/.s3cfg", "/aws.yml"
+        ]
+      },
+      "action": "block",
+      "severity": "high"
+    },
+    {
+      "rule_id": "dirsearch_008",
+      "description": "Code injection and RCE payload detection",
+      "conditions": {
+        "regex_patterns": [
+          "(?i)(\\bexec\\s*\\()",
+          "(?i)(?:curl|wget)\\s+.+\\|\\s*sh",
+          "\\$\\{jndi:ldap://",             
+          "(?i)<\\?php\\s+.*\\$_GET"
+        ]
+      },
+      "action": "block",
+      "severity": "high"
+    },
+    {
+      "rule_id": "dirsearch_009",
+      "description": "Suspicious error patterns",
+      "conditions": {
+        "error_404_count": {
+          "threshold": 50,
+          "time_window": 10,
+          "error_text_ratio": 0.6  
+        },
+        "regex_patterns": [
+          "(?i)(error|fail|denied)\\b.*\\b(MySQL|ODBC|JDBC)"
+        ]
+      },
+      "action": "alert",
+      "severity": "medium"
+    },
+    {
+      "rule_id": "dirsearch_010",
+      "description": "Non-standard HTTP methods and headers",
+      "conditions": {
+        "http_method": ["PUT", "DELETE", "CONNECT", "TRACE"],
+        "headers": {
+          "X-Forwarded-For": "127.0.0.1",
+          "CF-Connecting-IP": "::1"
+        }
+      },
+      "action": "log",
+      "severity": "low"
+    }
+  ]
+}

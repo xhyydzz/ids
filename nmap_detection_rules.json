@@ -1,0 +1,138 @@
+{
+  "nmap_scan_detection_rules": [
+    {
+      "rule_id": "nmap_001",
+      "description": "Detect TCP SYN (Stealth) Scan (-sS)",
+      "conditions": {
+        "protocol": "TCP",
+        "flags": "S",
+        "source_port": "> 30000",
+        "target_port_range": "1-1024",
+        "rate_threshold": "50",
+        "time_window": "60"
+      }
+    },
+    {
+      "rule_id": "nmap_002",
+      "description": "Detect TCP Connect Scan (-sT)",
+      "severity": "medium",
+      "conditions": {
+        "protocol": "TCP",
+        "flags": "S",
+        "complete_connections": true,
+        "source_port": "> 30000",
+        "target_port_range": "1-1024",
+        "time_window": "60"
+      }
+    },
+    {
+      "rule_id": "nmap_003",
+      "description": "Detect UDP Scan (-sU)",
+      "severity": "high",
+      "conditions": {
+        "protocol": "UDP",
+        "closed_port_response": "ICMP Port Unreachable",
+        "target_ports": "common",
+        "rate_threshold": "30",
+        "time_window": "60"
+      }
+    },
+    {
+      "rule_id": "nmap_004",
+      "description": "Detect FIN Scan (-sF)",
+      "severity": "high",
+      "conditions": {
+        "protocol": "TCP",
+        "flags": "F",
+        "no_response": true,
+        "source_port": "> 30000",
+        "target_port_range": "1-1024",
+        "rate_threshold": "20",
+        "time_window": "60"
+      }
+    },
+    {
+      "rule_id": "nmap_005",
+      "description": "Detect Xmas Scan (-sX)",
+      "severity": "high",
+      "conditions": {
+        "protocol": "TCP",
+        "flags": "FPU",
+        "allow_invalid_flags": true,
+        "source_port": "> 30000",
+        "target_port_range": "1-1024",
+        "rate_threshold": "20",
+        "time_window": "60"
+      }
+    },
+    {
+      "rule_id": "nmap_006",
+      "description": "Detect Null Scan (-sN)",
+      "severity": "high",
+      "conditions": {
+        "protocol": "TCP",
+        "flags": "",
+        "allow_invalid_flags": true,
+        "source_port": "> 30000",
+        "target_port_range": "1-1024",
+        "rate_threshold": "20",
+        "time_window": "60"
+      }
+    },
+    {
+      "rule_id": "nmap_007",
+      "description": "Detect ACK Scan (-sA)",
+      "severity": "medium",
+      "conditions": {
+        "protocol": "TCP",
+        "flags": "A",
+        "response_flags": "R",
+        "source_port": "> 30000",
+        "target_port_range": "1-1024",
+        "rate_threshold": "30",
+        "time_window": "60"
+      }
+    },
+    {
+      "rule_id": "nmap_008",
+      "description": "Detect OS Fingerprinting (-O)",
+      "severity": "critical",
+      "conditions": {
+        "protocol": "TCP",
+        "flags": "S",
+        "exotic_options": true,
+        "fragmented_packets": true,
+        "source_port": "> 30000",
+        "target_port_range": "1-1024",
+        "rate_threshold": "10",
+        "time_window": "60"
+      }
+    },
+    {
+      "rule_id": "nmap_009",
+      "description": "Detect Version Detection (-sV)",
+      "severity": "medium",
+      "conditions": {
+        "protocol": "TCP",
+        "payload_pattern": ["HTTP/1.1", "Server:"],
+        "user_agent": "nmap",
+        "source_port": "> 30000",
+        "target_port_range": "1-1024",
+        "rate_threshold": "20",
+        "time_window": "60"
+      }
+    },
+    {
+      "rule_id": "nmap_010",
+      "description": "Detect Ping Sweep (Host Discovery)",
+      "severity": "low",
+      "conditions": {
+        "protocol": "ICMP",
+        "type": "8",
+        "target_range": "/24",
+        "rate_threshold": "100",
+        "time_window": "60"
+      }
+    }
+  ]
+}
